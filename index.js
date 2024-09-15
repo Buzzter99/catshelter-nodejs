@@ -52,7 +52,7 @@ const server = http.createServer((req, res) => {
     const breed = parsedUrl.query.breed;
     if (!breed) {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end({message:'Breed name is required'});
+        res.end(JSON.stringify({message:'Breed name is required'}));
         return;
     } else {
         postBreed(breed);
