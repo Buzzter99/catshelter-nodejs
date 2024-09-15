@@ -1,6 +1,6 @@
 const http = require('http');
 const port = 5000;
-const {getAllCats, getBreedView,postBreed} = require('./routes/HomeRoutes');
+const {getAllCats, getBreedView,postBreed,addCatView} = require('./routes/HomeRoutes');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -58,6 +58,8 @@ const server = http.createServer((req, res) => {
         postBreed(breed);
         res.end(JSON.stringify({ message: 'Breed added successfully' }));
     }
+    } else if(parsedUrl.pathname === '/cats/add-cat' && req.method === 'GET') {
+        addCatView(req, res);
     }
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });

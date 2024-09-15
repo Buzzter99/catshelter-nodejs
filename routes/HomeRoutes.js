@@ -49,6 +49,23 @@ function postBreed(breed){
             }
         });
     };
+
+    function addCatView(req, res) {
+        const templatePath = path.join(__dirname, '../views/addCat.html');
+        fs.readFile(templatePath, 'utf8', (err, templateSource) => {
+            if (err) {
+                console.error(err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Error loading template');
+                return;
+            }
+            const template = handlebars.compile(templateSource);
+            const data = getBreedData();
+            const html = template({ breeds: data });
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(html);
+        });
+    }
 module.exports = {
-    getAllCats,getBreedView,postBreed
+    getAllCats,getBreedView,postBreed,addCatView
 };
