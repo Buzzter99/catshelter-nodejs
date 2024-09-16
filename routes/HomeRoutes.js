@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
-const {getAllCatData, getBreedData} = require('../controllers/catController');
-
+const {getAllCatData, getBreedData, filterCatData} = require('../controllers/catController');
 function getAllCats(req, res) {
     const templatePath = path.join(__dirname, '../views/home/index.html');
     fs.readFile(templatePath, 'utf8', (err, templateSource) => {
@@ -19,7 +18,25 @@ function getAllCats(req, res) {
         res.end(html);
     });
 }
-
+function searchCatData(req, res,searchTerm) {
+    const templatePath = path.join(__dirname, '../views/home/index.html');
+    fs.readFile(templatePath, 'utf8', (err, templateSource) => {
+        if (err) {
+            console.error(err);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error loading template');
+            return;
+        }
+        const template = handlebars.compile(templateSource);
+        let data = filterCatData(searchTerm);
+        if (data.length === 0) {
+            data = getAllCatData();
+        }
+        const html = template({ cats: data });
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+    });
+}
 function getBreedView(req, res) {
     const templatePath = path.join(__dirname, '../views/addBreed.html');
         fs.readFile(templatePath, 'utf8', (err, templateSource) => {
@@ -49,7 +66,6 @@ function postBreed(breed){
             }
         });
     };
-
     function addCatView(req, res) {
         const templatePath = path.join(__dirname, '../views/addCat.html');
         fs.readFile(templatePath, 'utf8', (err, templateSource) => {
@@ -67,5 +83,5 @@ function postBreed(breed){
         });
     }
 module.exports = {
-    getAllCats,getBreedView,postBreed,addCatView
+    getAllCats,getBreedView,postBreed,addCatView,searchCatData
 };
