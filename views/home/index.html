@@ -31,22 +31,23 @@
         <section class="cats">
             <ul>
                 {{#each cats}}
-                <li>
+                <li id="element-{{this.id}}">
                     <img src="{{this.image}}" alt="{{this.name}}">
-                    <input type="hidden" value="{{this.id}}">
                     <h3>{{this.name}}</h3>
                     <p><span>Breed: </span>{{this.breed}}</p>
                     <p><span>Description: </span>{{this.description}}</p>
                     <ul class="buttons">
                         <li class="btn edit"><a href="">Change Info</a></li>
-                        <li class="btn delete"><a href="">New Home</a></li>
+                        <li class="btn delete">
+                            <input type="hidden" class="cat" value="{{this.id}}">
+                            <a class="delete-btn" href="">New Home</a>
+                        </li>
                     </ul>
                 </li>
                 {{/each}}
             </ul>
         </section>
     </main>
-
+    <script src="/cat.js"></script>
 </body>
-
 </html>

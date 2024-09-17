@@ -11,8 +11,12 @@ function filterCatData(condition){
     || cat.name.toUpperCase().includes(condition.toUpperCase()) 
     || cat.description.toUpperCase().includes(condition.toUpperCase()));
 }
+function getCatById(id){
+    return data.find((cat) => cat.id == id);
+}
 module.exports = {
     getAllCatData,
     getBreedData,
-    filterCatData
+    filterCatData,
+    getCatById
 }

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
-const {getAllCatData, getBreedData, filterCatData} = require('../controllers/catController');
+const {getAllCatData, getBreedData, filterCatData, getCatById} = require('../controllers/catController');
 function getAllCats(req, res) {
     const templatePath = path.join(__dirname, '../views/home/index.html');
     fs.readFile(templatePath, 'utf8', (err, templateSource) => {
@@ -82,6 +82,20 @@ function postBreed(breed){
             res.end(html);
         });
     }
+
+    function deleteCat(cat){
+        const filePath = path.join(__dirname, '../data/cats.json');
+        let breeds = getAllCatData();
+        breeds = breeds.filter((c) => c.id !== cat.id);
+        const updatedData = JSON.stringify(breeds, null, 2);
+        fs.writeFile(filePath, updatedData, 'utf8', (err) => {
+            if (err) {
+                console.log('Error writing to file:', err);
+            } else {
+                console.log('Cat deleted successfully!');
+            }
+        });
+    };
 module.exports = {
-    getAllCats,getBreedView,postBreed,addCatView,searchCatData
+    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat
 };

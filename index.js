@@ -1,12 +1,6 @@
 const http = require("http");
 const port = 5000;
-const {
-  getAllCats,
-  getBreedView,
-  postBreed,
-  addCatView,
-  searchCatData,
-} = require("./routes/HomeRoutes");
+const {getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat} = require("./routes/HomeRoutes");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
@@ -36,7 +30,7 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { "Content-Type": "image/x-icon" });
       res.end(data);
     });
-  } else if (parsedUrl.pathname.includes("/app.js")) {
+  } else if (parsedUrl.pathname.endsWith(".js")) {
     const filePath = path.join(__dirname, req.url);
     fs.readFile(filePath, (err, data) => {
       if (err) {
@@ -51,8 +45,7 @@ const server = http.createServer((req, res) => {
   } else if (parsedUrl.pathname === "/cats/add-breed" && req.method === "GET") {
     getBreedView(req, res);
   } else if (
-    parsedUrl.pathname === "/cats/add-breed" &&
-    req.method === "POST"
+    parsedUrl.pathname === "/cats/add-breed" && req.method === "POST"
   ) {
     res.writeHead(200, { "Content-Type": "application/json" });
     const breed = parsedUrl.query.breed;
@@ -70,9 +63,19 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     const searchTerm = parsedUrl.query.searchTerm;
     searchCatData(req, res, searchTerm);
+  } else if(parsedUrl.pathname.startsWith("/cats/delete") && req.method === "DELETE") {
+    const pathnameParts = parsedUrl.pathname.split('/');
+    const id = pathnameParts[3];
+    const cat = getCatById(id);
+    if (cat) {
+    deleteCat(cat);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "Cat deleted successfully" }));
+
   } else {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("404 Not Found");
+    res.writeHead(404, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "Cat not found" }));
+  }
   }
 });
 try {
