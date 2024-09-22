@@ -37,7 +37,8 @@
                     <p><span>Breed: </span>{{this.breed}}</p>
                     <p><span>Description: </span>{{this.description}}</p>
                     <ul class="buttons">
-                        <li class="btn edit"><a href="">Change Info</a></li>
+                        <li class="btn edit">
+                            <a class="edit-btn" href="/cats/edit?id={{this.id}}">Change Info</a></li>
                         <li class="btn delete">
                             <input type="hidden" class="cat" value="{{this.id}}">
                             <a class="delete-btn" href="">New Home</a>

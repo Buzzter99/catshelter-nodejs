@@ -155,6 +155,23 @@ function postBreed(breed){
             }
         });
     }
+
+    function editCatView(req, res,id) {
+        const templatePath = path.join(__dirname, '../views/editCat.html');
+        fs.readFile(templatePath, 'utf8', (err, templateSource) => {
+            if (err) {
+                console.error(err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Error loading template');
+                return;
+            }
+            const template = handlebars.compile(templateSource);
+            const catData = getCatById(id);
+            const html = template({ catData: catData,breeds:getBreedData() });
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(html);
+        });
+    }
 module.exports = {
-    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat,saveCat
+    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat,saveCat,editCatView
 };

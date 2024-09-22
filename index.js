@@ -8,7 +8,8 @@ const {
   searchCatData,
   getCatById,
   deleteCat, 
-  saveCat
+  saveCat,
+  editCatView
 } = require("./routes/HomeRoutes");
 const fs = require("fs");
 const path = require("path");
@@ -53,7 +54,11 @@ const server = http.createServer((req, res) => {
     });
   } else if (parsedUrl.pathname === "/cats/add-breed" && req.method === "GET") {
     getBreedView(req, res);
-  } else if (
+  } else if(parsedUrl.pathname.startsWith("/cats/edit") && req.method === "GET") {
+    const id = parsedUrl.query.id;
+    editCatView(req, res, id);
+}
+   else if (
     parsedUrl.pathname === "/cats/add-breed" && req.method === "POST"
   ) {
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -114,7 +119,8 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Cat deleted successfully" }));
 
-  } else {
+  }
+   else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Cat not found" }));
   }
