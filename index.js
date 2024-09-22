@@ -1,6 +1,15 @@
 const http = require("http");
 const port = 5000;
-const {getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat} = require("./routes/HomeRoutes");
+const {
+  getAllCats,
+  getBreedView,
+  postBreed,
+  addCatView,
+  searchCatData,
+  getCatById,
+  deleteCat, 
+  saveCat
+} = require("./routes/HomeRoutes");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
@@ -59,11 +68,44 @@ const server = http.createServer((req, res) => {
     }
   } else if (parsedUrl.pathname === "/cats/add-cat" && req.method === "GET") {
     addCatView(req, res);
-  } else if (parsedUrl.pathname === "/cats/search" && req.method === "GET") {
+  } else if (parsedUrl.pathname === "/cats/add-cat" && req.method === "POST") {
+    saveCat(req, res);
+  }
+   else if (parsedUrl.pathname === "/cats/search" && req.method === "GET") {
     res.writeHead(200, { "Content-Type": "application/json" });
     const searchTerm = parsedUrl.query.searchTerm;
     searchCatData(req, res, searchTerm);
-  } else if(parsedUrl.pathname.startsWith("/cats/delete") && req.method === "DELETE") {
+  }else if (req.url.startsWith('/content/images/')) {
+    const filePath = path.join(__dirname, req.url);
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Image not found');
+            return;
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        let contentType = 'image/jpeg';
+
+        switch (ext) {
+            case '.png':
+                contentType = 'image/png';
+                break;
+            case '.gif':
+                contentType = 'image/gif';
+                break;
+            case '.jpg':
+            case '.jpeg':
+                contentType = 'image/jpeg';
+                break;
+            case '.svg':
+                contentType = 'image/svg+xml';
+                break;
+        }
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(data);
+    });
+  }
+  else if(parsedUrl.pathname.startsWith("/cats/delete") && req.method === "DELETE") {
     const pathnameParts = parsedUrl.pathname.split('/');
     const id = pathnameParts[3];
     const cat = getCatById(id);
