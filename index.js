@@ -9,7 +9,8 @@ const {
   getCatById,
   deleteCat, 
   saveCat,
-  editCatView
+  editCatView,
+  editCat
 } = require("./routes/HomeRoutes");
 const fs = require("fs");
 const path = require("path");
@@ -57,10 +58,10 @@ const server = http.createServer((req, res) => {
   } else if(parsedUrl.pathname.startsWith("/cats/edit") && req.method === "GET") {
     const id = parsedUrl.query.id;
     editCatView(req, res, id);
+} else if(parsedUrl.pathname.startsWith("/cats/edit") && req.method === "POST") {
+    editCat(req, res);
 }
-   else if (
-    parsedUrl.pathname === "/cats/add-breed" && req.method === "POST"
-  ) {
+   else if (parsedUrl.pathname === "/cats/add-breed" && req.method === "POST") {
     res.writeHead(200, { "Content-Type": "application/json" });
     const breed = parsedUrl.query.breed;
     if (!breed) {

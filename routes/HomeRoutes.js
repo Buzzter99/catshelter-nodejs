@@ -151,7 +151,7 @@ function postBreed(breed){
             if (err) {
                 console.error('Error writing to file:', err);
             } else {
-                console.log('New breed added successfully!');
+                console.log('Cat added successfully!');
             }
         });
     }
@@ -172,6 +172,67 @@ function postBreed(breed){
             res.end(html);
         });
     }
+
+    function editCat(req, res) {
+        const form = new formidable.IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Error parsing the form: ' + err);
+                return;
+            }
+            const id = Number.parseInt(fields.id[0]);
+            const catObject = getCatById(id);
+            const name = fields.name[0];
+            const breed = fields.breed[0];
+            const description = fields.description[0];
+            if (!name || !breed || !description || !files.upload || !catObject) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Missing required fields or there are validation errors!');
+                return;
+            }
+            const uploadedFile = files.upload[0]; 
+            if (!uploadedFile) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('No file uploaded');
+                return;
+            }
+            const oldPath = uploadedFile.filepath; 
+            const newDir = path.join(__dirname, '../content', 'images');
+            const newPath = path.join(newDir, uploadedFile.originalFilename);
+            if (!fs.existsSync(newDir)) {
+                fs.mkdirSync(newDir);
+            }
+            fs.rename(oldPath, newPath, (err) => {
+                if (err) {
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end('Error saving the file: ' + err);
+                    return;
+                }
+                const cat = { id,name, breed, description, image: '../../content/images/' + uploadedFile.originalFilename };
+                editCatToDb(cat);
+                res.writeHead(302, { Location: '/' });
+                res.end();
+            });
+        });
+    }
+    function editCatToDb(cat) {
+        const filePath = path.join(__dirname, '../data/cats.json');
+        let cats = getAllCatData();
+        const elementToEdit = { id: cat.id,name: cat.name,breed: cat.breed,description: cat.description,image: cat.image };
+        const index = cats.findIndex((c) => c.id == elementToEdit.id);
+        if (index !== -1) {
+            cats[index] = elementToEdit;
+        }
+        const updatedData = JSON.stringify(cats, null, 2);
+        fs.writeFile(filePath, updatedData, 'utf8', (err) => {
+            if (err) {
+                console.error('Error writing to file:', err);
+            } else {
+                console.log('Cat was modified succesfully!');
+            }
+        });
+    }
 module.exports = {
-    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat,saveCat,editCatView
+    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat,saveCat,editCatView,editCat
 };

@@ -22,18 +22,19 @@
         <h1>Cat Shelter</h1>
     </header>
     <main>
-        <form action="#" method="" class="cat-form" enctype="multipart/form-data">
+        <form action="/cats/edit" method="post" class="cat-form" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{catData.id}}">
             <h2>Edit Cat</h2>
             <label for="name">Name</label>
-            <input type="text" id="name" value="{{catData.name}}">
+            <input type="text" id="name" name="name" value="{{catData.name}}">
             <label for="description">Description</label>
-            <textarea id="description">{{catData.description}}</textarea>
+            <textarea id="description" name="description">{{catData.description}}</textarea>
             <label for="image">Image</label>
-            <input type="file" id="image">
+            <input type="file" name="upload" id="image">
             <label for="group">Breed</label>
-            <select id="group">
+            <select name="breed" id="group">
                 {{#each breeds}}
-                    <option value="{{this.name}}">{{this.name}}</option>
+                    <option  value="{{this.name}}">{{this.name}}</option>
                 {{/each}}
             </select>
             <button>Edit Cat</button>
