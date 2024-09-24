@@ -210,7 +210,13 @@ function postBreed(breed){
                     return;
                 }
                 const cat = { id,name, breed, description, image: '../../content/images/' + uploadedFile.originalFilename };
-                editCatToDb(cat);
+                try {
+                    editCatToDb(cat);
+                } catch (error) {
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end(error.message);
+                    return;
+                }
                 res.writeHead(302, { Location: '/' });
                 res.end();
             });
@@ -223,6 +229,8 @@ function postBreed(breed){
         const index = cats.findIndex((c) => c.id == elementToEdit.id);
         if (index !== -1) {
             cats[index] = elementToEdit;
+        } else {
+            throw new Error('Cat not found');
         }
         const updatedData = JSON.stringify(cats, null, 2);
         fs.writeFile(filePath, updatedData, 'utf8', (err) => {
@@ -234,5 +242,14 @@ function postBreed(breed){
         });
     }
 module.exports = {
-    getAllCats,getBreedView,postBreed,addCatView,searchCatData,getCatById,deleteCat,saveCat,editCatView,editCat
+    getAllCats,
+    getBreedView,
+    postBreed,
+    addCatView,
+    searchCatData,
+    getCatById,
+    deleteCat,
+    saveCat,
+    editCatView,
+    editCat
 };
